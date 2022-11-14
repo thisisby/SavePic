@@ -16,8 +16,8 @@ public class PictureEntity extends BaseEntity {
 
 	private String title;
 	private String label;
+	private String imgUrl;
 
 	@ManyToOne
 	private EventEntity event;
-	private String imgUrl;
 }

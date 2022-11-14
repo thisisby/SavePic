@@ -16,11 +16,10 @@ import java.util.Date;
 public class EventEntity extends BaseEntity {
 
 	private String title;
-
-	@ManyToOne
-	private Location location;
-
 	private String creator;
 	private Date startedAt;
 	private String profileImgUrl;
+
+	@ManyToOne
+	private Location location;
 }

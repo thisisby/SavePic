@@ -8,7 +8,6 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.List;
 
