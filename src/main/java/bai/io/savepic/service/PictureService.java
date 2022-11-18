@@ -1,8 +1,11 @@
 package bai.io.savepic.service;
 
 import bai.io.savepic.model.entity.Picture;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface PictureService {
 
@@ -10,7 +13,11 @@ public interface PictureService {
 
 	List<Picture> findAll();
 
-	void savePicture(Picture picture);
+	Picture savePicture(Picture picture);
+
+	Path load(String filename);
+
+	Stream<Path> loadAll();
 
 	Picture findByLabel(String label);
 

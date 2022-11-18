@@ -16,7 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class
+SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private final UserEntityDetailService userEntityDetailService;
 	private final JwtFilter jwtFilter;
@@ -44,9 +45,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.csrf()
 				.disable()
 				.authorizeRequests()
-				.antMatchers("/register", "/signup", "/user/authenticate", "/user/login", "/notification", "/password", "/swagger-ui/index.html", "/v3/api-docs", "/configuration/ui", "/swagger-resources/**",
-				"/configuration/security", "/swagger-ui/*", "/webjars/**", "/v3/**")
-				.permitAll()
+				.antMatchers("/user/authenticate", "/user/login").permitAll()
+				.antMatchers("/user/**", "/event/**", "/user").hasRole("ADMIN")
+				.antMatchers("/picture/**").hasRole("CLIENT")
 				.anyRequest()
 				.authenticated()
 				.and()

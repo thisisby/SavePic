@@ -6,10 +6,14 @@ import bai.io.savepic.model.entity.Picture;
 import bai.io.savepic.service.PictureService;
 import bai.io.savepic.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/picture")
@@ -31,14 +35,20 @@ public class PictureController {
 	}
 
 	@PostMapping("/save")
-	public Picture savePicture(@RequestParam MultipartFile file, @RequestParam String label) {
+	public void savePicture(@RequestParam String label,
+							   @RequestParam MultipartFile file) {
+
+		try {
+			Picture picture = new Picture(label,"ss", file.getBytes());
+			pictureService.savePicture(picture);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 //		Picture picture = modelMapper.map(pictureDto, Picture.class);
 //		pictureService.savePicture(picture);
-		System.out.println(label);
-		System.out.println(file.getOriginalFilename());
-
+//
 //		return picture;
-		return null;
 	}
 
 	@PostMapping("/saveForClient")
