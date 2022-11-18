@@ -1,24 +1,21 @@
 package bai.io.savepic.model.entity;
 
 import bai.io.savepic.model.entity.baseEntity.BaseEntity;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
+@Table(name = "events")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class EventEntity extends BaseEntity {
+public class Event extends BaseEntity {
 
 	private String title;
 	private String creator;
-	private Date startedAt;
-	private String profileImgUrl;
+	private Date createdAt;
 
 	@ManyToOne
 	private Location location;
