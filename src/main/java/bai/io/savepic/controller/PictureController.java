@@ -1,11 +1,13 @@
 package bai.io.savepic.controller;
 
-import bai.io.savepic.model.dto.PictureDto;
+import bai.io.savepic.model.dto.ImageKitRequest;
 import bai.io.savepic.model.dto.PictureForClientDto;
 import bai.io.savepic.model.entity.Picture;
+import bai.io.savepic.repository.PictureRepository;
 import bai.io.savepic.service.PictureService;
 import bai.io.savepic.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,11 +18,13 @@ import java.util.List;
 public class PictureController {
 
 	private final PictureService pictureService;
+	private final PictureRepository pictureRepository;
 	private final UserService userService;
 	private final ModelMapper modelMapper;
 
-	public PictureController(PictureService pictureService, UserService userService, ModelMapper modelMapper) {
+	public PictureController(PictureService pictureService, PictureRepository pictureRepository, UserService userService, ModelMapper modelMapper) {
 		this.pictureService = pictureService;
+		this.pictureRepository = pictureRepository;
 		this.userService = userService;
 		this.modelMapper = modelMapper;
 	}
@@ -34,11 +38,20 @@ public class PictureController {
 	public Picture savePicture(@RequestParam MultipartFile file, @RequestParam String label) {
 //		Picture picture = modelMapper.map(pictureDto, Picture.class);
 //		pictureService.savePicture(picture);
+		ResponseEntity<ImageKitRequest> response = pictureService.savePicture(file, label);
+		ImageKitRequest imagekit = response.getBody();
 		System.out.println(label);
 		System.out.println(file.getOriginalFilename());
 
+		Picture newPicture = Picture.builder()
+				.label(label)
+				.imgUrl(imagekit.getUrl())
+				.build();
+
+		pictureRepository.save(newPicture);
+
 //		return picture;
-		return null;
+		return newPicture;
 	}
 
 	@PostMapping("/saveForClient")
