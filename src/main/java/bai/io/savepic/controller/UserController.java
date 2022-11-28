@@ -72,6 +72,10 @@ public class UserController {
 
 	@PostMapping("/registerClient")
 	public ResponseEntity<UserClient> registerClient(@RequestBody UserClientDto user) {
+
+		if (user.getUsername() == null || user.getEmail() == null || user.getPassword() == null) {
+			throw new RuntimeException("Invalid data");
+		}
 		if (userService.userExists(user.getUsername(), user.getEmail())) {
 			throw new RuntimeException("Username or email address already in use.");
 		}

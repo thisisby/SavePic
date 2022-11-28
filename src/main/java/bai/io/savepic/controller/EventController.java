@@ -10,6 +10,10 @@ import bai.io.savepic.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +41,12 @@ public class EventController {
 
 	@PostMapping("/save")
 	public boolean save(@RequestBody EventDto eventDto) {
+		String username = eventDto.getUsername();
 		Event event = modelMapper.map(eventDto, Event.class);
-		Location location = locationService.findLocationByName(LocationEnum.OSH);
+		Location location = locationService.findLocationByName(eventDto.getLocationEnum());
 		event.setLocation(location);
-		eventService.saveEvent(event);
+		event.setCreatedAt(LocalDate.now());
+		eventService.saveEvent(event, username);
 
 		return true;
 	}

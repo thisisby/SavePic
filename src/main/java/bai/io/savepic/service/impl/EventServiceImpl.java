@@ -42,8 +42,10 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public void saveEvent(Event event) {
+	public void saveEvent(Event event, String username) {
+
 		eventRepository.save(event);
+		saveEventForAdmin(event, username);
 	}
 
 	@Override

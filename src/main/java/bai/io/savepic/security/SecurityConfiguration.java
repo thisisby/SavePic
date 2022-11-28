@@ -45,7 +45,7 @@ SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.csrf()
 				.disable()
 				.authorizeRequests()
-				.antMatchers("/user/authenticate", "/user/login").permitAll()
+				.antMatchers("/user/registerClient", "/user/authenticate", "/user/login", "/picture", "/event").permitAll()
 				.antMatchers("/user/**", "/event/**", "/user").hasRole("ADMIN")
 				.antMatchers("/picture/**").hasRole("CLIENT")
 				.anyRequest()

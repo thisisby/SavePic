@@ -1,6 +1,7 @@
 package bai.io.savepic.model.entity;
 
 import bai.io.savepic.model.entity.baseEntity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

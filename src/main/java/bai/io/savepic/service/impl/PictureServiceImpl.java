@@ -2,9 +2,11 @@ package bai.io.savepic.service.impl;
 
 import bai.io.savepic.config.AppProperty;
 import bai.io.savepic.model.dto.ImageKitRequest;
+import bai.io.savepic.model.entity.Event;
 import bai.io.savepic.model.entity.Picture;
 import bai.io.savepic.model.entity.UserClient;
 import bai.io.savepic.repository.PictureRepository;
+import bai.io.savepic.service.EventService;
 import bai.io.savepic.service.PictureService;
 import bai.io.savepic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +35,14 @@ public class PictureServiceImpl implements PictureService {
 	private final PictureRepository pictureRepository;
 	private final UserService userService;
 	private final AppProperty appProperty;
+	private final EventService eventService;
 
 	@Autowired
-	public PictureServiceImpl(PictureRepository pictureRepository, UserService userService, AppProperty appProperty) {
+	public PictureServiceImpl(PictureRepository pictureRepository, UserService userService, AppProperty appProperty, EventService eventService) {
 		this.pictureRepository = pictureRepository;
 		this.userService = userService;
 		this.appProperty = appProperty;
+		this.eventService = eventService;
 	}
 
 	@Override
@@ -53,14 +57,21 @@ public class PictureServiceImpl implements PictureService {
 
 	@Override
 	@Async
-	public ResponseEntity<ImageKitRequest> savePicture(MultipartFile multipartFile, String label) {
+	public ResponseEntity<ImageKitRequest> savePicture(MultipartFile multipartFile, String label, String username, Long eventId) {
 
 		String extension = multipartFile.getOriginalFilename().split("\\.")[1];
 		String fileName = label + "." + extension;
 
 		final File file = convertMultiPartFileToFile(multipartFile);
 		ResponseEntity<ImageKitRequest> response = uploadFileToImagekit(fileName, file);
-		System.out.println(response);
+		ImageKitRequest imageKitRequest = response.getBody();
+		Picture picture = Picture
+				.builder()
+				.label(label)
+				.imgUrl(imageKitRequest.getUrl())
+				.build();
+		Picture newPic = pictureRepository.save(picture);
+		savePictureForClient(newPic, username, eventId);
 		file.delete();
 
 		return response;
@@ -108,8 +119,8 @@ public class PictureServiceImpl implements PictureService {
 	}
 
 	@Override
-	public Picture findByLabel(String label) {
-		return pictureRepository.findByLabel(label).get();
+	public List<Picture> findAllByLabel(String label) {
+		return pictureRepository.findAllByLabel(label);
 	}
 
 	@Override
@@ -118,11 +129,17 @@ public class PictureServiceImpl implements PictureService {
 	}
 
 	@Override
-	public Picture savePictureForClient(Picture picture, String username) {
+	public Picture savePictureForClient(Picture picture, String username, Long eventId) {
 		UserClient userClient = (UserClient) userService.findUserEntityByUsername(username);
 		Picture pictureById = pictureRepository.findById(picture.getId()).get();
 		List<Picture> pictures = userClient.getPictures();
 		pictures.add(pictureById);
+
+		Event event = eventService.findById(eventId).get();
+		List<Picture> events = event.getPictures();
+		events.add(pictureById);
+
 		return pictureById;
 	}
+
 }

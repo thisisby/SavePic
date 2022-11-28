@@ -1,6 +1,7 @@
 package bai.io.savepic.model.entity.baseEntity;
 
 import bai.io.savepic.model.entity.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,8 @@ public class UserEntity extends BaseEntity implements Serializable {
 
 	private String username;
 	private String email;
+
+	@JsonIgnore
 	private String password;
 
 	public UserEntity(String username, String email, String password) {
@@ -29,6 +32,7 @@ public class UserEntity extends BaseEntity implements Serializable {
 		this.password = password;
 	}
 
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<UserRole> roles = new ArrayList<>();
 }

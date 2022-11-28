@@ -35,35 +35,22 @@ public class PictureController {
 	}
 
 	@PostMapping("/save")
-	public Picture savePicture(@RequestParam MultipartFile file, @RequestParam String label) {
+	public boolean savePicture(@RequestParam MultipartFile file, @RequestParam String label, @RequestParam String username, @RequestParam Long eventId) {
 //		Picture picture = modelMapper.map(pictureDto, Picture.class);
 //		pictureService.savePicture(picture);
-		ResponseEntity<ImageKitRequest> response = pictureService.savePicture(file, label);
+
+		ResponseEntity<ImageKitRequest> response = pictureService.savePicture(file, label, username, eventId);
 		ImageKitRequest imagekit = response.getBody();
 		System.out.println(label);
 		System.out.println(file.getOriginalFilename());
 
-		Picture newPicture = Picture.builder()
-				.label(label)
-				.imgUrl(imagekit.getUrl())
-				.build();
-
-		pictureRepository.save(newPicture);
-
-//		return picture;
-		return newPicture;
-	}
-
-	@PostMapping("/saveForClient")
-	public boolean saveForClient(@RequestBody PictureForClientDto pictureForClientDto){
-		Picture picture = pictureService.findById(pictureForClientDto.getId());
-		pictureService.savePictureForClient(picture, pictureForClientDto.getUsername());
 		return true;
 	}
 
+
 	@GetMapping("/findByLabel")
-	public Picture findByLabel(@RequestParam String label){
-		return pictureService.findByLabel(label);
+	public List<Picture> findAllByLabel(@RequestParam String label){
+		return pictureService.findAllByLabel(label);
 	}
 
 

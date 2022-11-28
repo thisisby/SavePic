@@ -15,6 +15,7 @@ import bai.io.savepic.service.UserRoleService;
 import bai.io.savepic.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,14 +31,16 @@ public class UserServiceImpl implements UserService {
 	private final UserClientRepository userClientRepository;
 	private final UserRoleService userRoleService;
 	private final ModelMapper modelMapper;
+	private final PasswordEncoder passwordEncoder;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, UserAdminRepository userAdminRepository, UserClientRepository userClientRepository, UserRoleService userRoleService, ModelMapper modelMapper) {
+	public UserServiceImpl(UserRepository userRepository, UserAdminRepository userAdminRepository, UserClientRepository userClientRepository, UserRoleService userRoleService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.userAdminRepository = userAdminRepository;
 		this.userClientRepository = userClientRepository;
 		this.userRoleService = userRoleService;
 		this.modelMapper = modelMapper;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 
@@ -130,6 +133,7 @@ public class UserServiceImpl implements UserService {
 		UserRole userRole = userRoleService.getUserRoleByEnumName(UserRoleEnum.CLIENT);
 		UserClient userClient = this.modelMapper.map(userClientDto, UserClient.class);
 		userClient.setRoles(List.of(userRole));
+		userClient.setPassword(passwordEncoder.encode(userClientDto.getPassword()));
 		return userClientRepository.save(userClient);
 	}
 

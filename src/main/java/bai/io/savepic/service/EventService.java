@@ -14,7 +14,7 @@ public interface EventService {
 
 	List<Event> findAll();
 
-	void saveEvent(Event event);
+	void saveEvent(Event event, String username);
 
 	boolean saveEventForAdmin(Event event, String username);
 }
