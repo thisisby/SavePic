@@ -41,13 +41,13 @@ SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.csrf()
+		http.cors();
+		http.csrf()
 				.disable()
 				.authorizeRequests()
-				.antMatchers("/user/registerClient", "/user/authenticate", "/user/login", "/picture", "/event").permitAll()
+				.antMatchers("/user/registerClient", "/user/authenticate", "/user/login", "/event", "/picture/findByEventId", "/picture/**").permitAll()
 				.antMatchers("/user/**", "/event/**", "/user").hasRole("ADMIN")
-				.antMatchers("/picture/**").hasRole("CLIENT")
+//				.antMatchers("/picture/save").hasRole("CLIENT")
 				.anyRequest()
 				.authenticated()
 				.and()

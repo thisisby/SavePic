@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-public class AppBeanConfiguration implements WebMvcConfigurer {
+public class AppBeanConfiguration {
 
 	//	@Bean
 //	public PasswordEncoder createPasswordEncoder() {
@@ -26,15 +26,6 @@ public class AppBeanConfiguration implements WebMvcConfigurer {
 	public ModelMapper createModelMapper() {
 		return new ModelMapper();
 	}
-
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-				.allowedMethods("GET", "POST", "PATCH", "PUT");
-	}
-
-
-
 
 
 }

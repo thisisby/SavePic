@@ -24,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
 	private final UserService userService;
@@ -117,6 +118,7 @@ public class UserController {
 	}
 	@PostMapping("/login")
 	public String logInUser(@RequestParam String username) {
+		System.out.println("asd");
 		UserEntity userByUsername = this.userService.findUserEntityByUsername(username);
 		if (userByUsername.getRoles().stream()
 				.anyMatch(u -> u.getRole().equals(UserRoleEnum.CLIENT))) {

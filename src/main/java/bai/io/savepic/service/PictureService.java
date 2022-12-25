@@ -15,11 +15,13 @@ public interface PictureService {
 	List<Picture> findAll();
 
 	@Async
-	ResponseEntity<ImageKitRequest> savePicture(MultipartFile multipartFile, String label, String username, Long eventId);
+	boolean savePicture(MultipartFile[] multipartFile, String label, String username, Long eventId);
 
 	List<Picture> findAllByLabel(String label);
 
 	List<Picture> findAllMatchForClient(String username);
 
 	Picture savePictureForClient(Picture picture, String username, Long eventId);
+
+	List<Picture> findAllByEventId(Long id);
 }

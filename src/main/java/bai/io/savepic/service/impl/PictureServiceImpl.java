@@ -26,6 +26,8 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -57,24 +59,53 @@ public class PictureServiceImpl implements PictureService {
 
 	@Override
 	@Async
-	public ResponseEntity<ImageKitRequest> savePicture(MultipartFile multipartFile, String label, String username, Long eventId) {
+	public boolean savePicture(MultipartFile[] multipartFile, String label, String username, Long eventId) {
 
-		String extension = multipartFile.getOriginalFilename().split("\\.")[1];
+		Event event = eventService.findById(eventId).get();
+
+		String extension = multipartFile[0].getOriginalFilename().split("\\.")[1];
 		String fileName = label + "." + extension;
 
-		final File file = convertMultiPartFileToFile(multipartFile);
-		ResponseEntity<ImageKitRequest> response = uploadFileToImagekit(fileName, file);
-		ImageKitRequest imageKitRequest = response.getBody();
-		Picture picture = Picture
-				.builder()
-				.label(label)
-				.imgUrl(imageKitRequest.getUrl())
-				.build();
-		Picture newPic = pictureRepository.save(picture);
-		savePictureForClient(newPic, username, eventId);
-		file.delete();
+		List<MultipartFile> files = new ArrayList<>(Arrays.asList(multipartFile));
+		List<File> fileList = new ArrayList<>();
 
-		return response;
+		files.stream().forEach(file -> {
+			fileList.add(convertMultiPartFileToFile(file));
+		});
+
+//		final File file = convertMultiPartFileToFile(multipartFile);
+		List<ResponseEntity<ImageKitRequest>> res = new ArrayList<>();
+
+		fileList.stream().forEach(file -> {
+			res.add(uploadFileToImagekit(fileName, file));
+		});
+
+//		ResponseEntity<ImageKitRequest> response = uploadFileToImagekit(fileName, file);
+
+		for (int i = 0; i < res.size(); i++) {
+			ImageKitRequest imageKitRequest = res.get(i).getBody();
+			Picture picture = Picture
+					.builder()
+					.label(label)
+					.imgUrl(imageKitRequest.getUrl())
+					.event(event)
+					.build();
+			Picture newPic = pictureRepository.save(picture);
+			savePictureForClient(newPic, username, eventId);
+		}
+		files.clear();
+		fileList.clear();
+//		ImageKitRequest imageKitRequest = response.getBody();
+//		Picture picture = Picture
+//				.builder()
+//				.label(label)
+//				.imgUrl(imageKitRequest.getUrl())
+//				.build();
+//		Picture newPic = pictureRepository.save(picture);
+//		savePictureForClient(newPic, username, eventId);
+//		file.delete();
+
+		return true;
 	}
 	private File convertMultiPartFileToFile(final MultipartFile multipartFile) {
 		File file = new File(multipartFile.getOriginalFilename());
@@ -140,6 +171,11 @@ public class PictureServiceImpl implements PictureService {
 		events.add(pictureById);
 
 		return pictureById;
+	}
+
+	@Override
+	public List<Picture> findAllByEventId(Long id) {
+		return pictureRepository.findPicturesByEventId(id);
 	}
 
 }

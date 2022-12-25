@@ -1,13 +1,10 @@
 package bai.io.savepic.init;
 
-import bai.io.savepic.model.entity.UserAdmin;
-import bai.io.savepic.model.entity.UserClient;
-import bai.io.savepic.model.entity.UserRole;
+import bai.io.savepic.model.entity.*;
+import bai.io.savepic.model.entity.enums.LocationEnum;
 import bai.io.savepic.model.entity.enums.UserRoleEnum;
-import bai.io.savepic.repository.UserAdminRepository;
-import bai.io.savepic.repository.UserClientRepository;
-import bai.io.savepic.repository.UserRepository;
-import bai.io.savepic.repository.UserRoleRepository;
+import bai.io.savepic.repository.*;
+import bai.io.savepic.service.EventService;
 import bai.io.savepic.service.LocationService;
 import bai.io.savepic.service.UserRoleService;
 import bai.io.savepic.service.UserService;
@@ -16,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -29,9 +27,10 @@ public class DBInit implements CommandLineRunner {
 	private final UserClientRepository userClientRepository;
 	private final UserAdminRepository userAdminRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EventService eventService;
 
 	@Autowired
-	public DBInit(UserService userService, LocationService locationService, UserRepository userRepository, UserRoleRepository userRoleRepository, UserRoleService userRoleService, UserClientRepository userClientRepository, UserAdminRepository userAdminRepository, PasswordEncoder passwordEncoder) {
+	public DBInit(UserService userService, LocationService locationService, UserRepository userRepository, UserRoleRepository userRoleRepository, UserRoleService userRoleService, UserClientRepository userClientRepository, UserAdminRepository userAdminRepository, PasswordEncoder passwordEncoder, EventService eventService) {
 		this.userService = userService;
 		this.locationService = locationService;
 		this.userRepository = userRepository;
@@ -40,6 +39,7 @@ public class DBInit implements CommandLineRunner {
 		this.userClientRepository = userClientRepository;
 		this.userAdminRepository = userAdminRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.eventService = eventService;
 	}
 
 
@@ -55,6 +55,15 @@ public class DBInit implements CommandLineRunner {
 		UserClient isko = new UserClient("Isko", "Isk@fa.co", passwordEncoder.encode("123"));
 		UserRole userRole2 = userRoleService.getUserRoleByEnumName(UserRoleEnum.CLIENT);
 		isko.setRoles(List.of(userRole2));
+
+//		Event event = new Event();
+//		Location location = locationService.findLocationByName(LocationEnum.OSH);
+//		event.setTitle("Running");
+//		event.setCreator("Baistan");
+//		event.setCreatedAt(LocalDate.now());
+//		event.setLocation(location);
+//
+//		eventService.saveEvent(event, "Bai");
 
 		userAdminRepository.save(bai);
 		userClientRepository.save(isko);

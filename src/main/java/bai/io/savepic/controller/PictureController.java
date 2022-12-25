@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/picture")
+@CrossOrigin(origins = "http://localhost:3000")
 public class PictureController {
 
 	private final PictureService pictureService;
@@ -34,23 +35,29 @@ public class PictureController {
 		return pictureService.findAll();
 	}
 
-	@PostMapping("/save")
-	public boolean savePicture(@RequestParam MultipartFile file, @RequestParam String label, @RequestParam String username, @RequestParam Long eventId) {
+	@PostMapping(value = "/save", consumes = {"multipart/form-data"})
+	public boolean savePicture(@RequestParam("file") MultipartFile[] file, @RequestParam("label") String label, @RequestParam("username") String username, @RequestParam("eventId") Long eventId) {
 //		Picture picture = modelMapper.map(pictureDto, Picture.class);
 //		pictureService.savePicture(picture);
-
-		ResponseEntity<ImageKitRequest> response = pictureService.savePicture(file, label, username, eventId);
-		ImageKitRequest imagekit = response.getBody();
+		System.out.println("Entered");
+		boolean response = pictureService.savePicture(file, label, username, eventId);
+//		ImageKitRequest imagekit = response.getBody();
 		System.out.println(label);
-		System.out.println(file.getOriginalFilename());
 
 		return true;
 	}
 
 
+
 	@GetMapping("/findByLabel")
 	public List<Picture> findAllByLabel(@RequestParam String label){
 		return pictureService.findAllByLabel(label);
+	}
+
+	@GetMapping("/findByEventId")
+	public List<Picture> findAllByEventId(@RequestParam Long id) {
+		System.out.println(id);
+		return pictureService.findAllByEventId(id);
 	}
 
 
